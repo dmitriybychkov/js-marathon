@@ -3,6 +3,8 @@ function $getElById(id) {
 }
 
 const $btn = document.getElementById('btn-kick');
+const $btn2 = document.getElementById('btn-kick2');
+
 const $logs = document.getElementById('logs');
 
 const character = {
@@ -20,7 +22,6 @@ const character = {
     renderHP,
     renderHPLife,
     renderProgressbarHP
-
 }
 
 const enemy = {
@@ -41,8 +42,34 @@ const enemy = {
 
 $btn.addEventListener('click', function () {
     console.log('Kick!');
+
     character.changeHP(random(20));
     enemy.changeHP(random(20));
+
+    let hitCount = countBtn1();
+    let maxHit = 6;
+
+    console.log(`Thunder Jolt used: ${hitCount}/${maxHit}`);
+    $btn.innerText = `Thunder Jolt: ${hitCount}/${maxHit}`;
+    if (hitCount >= maxHit) {
+        $btn.disabled = true;
+    }
+})
+
+$btn2.addEventListener('click', function () {
+    console.log('Kick!');
+
+    character.changeHP(random(40));
+    enemy.changeHP(random(40));
+
+    let hitCount = countBtn2();
+    let maxHit = 3;
+
+    console.log(`Fireball used: ${hitCount}/${maxHit}`);
+    $btn2.innerText = `Fireball: ${hitCount}/${maxHit}`;
+    if (hitCount >= maxHit) {
+        $btn2.disabled = true;
+    }
 })
 
 function init() {
@@ -90,6 +117,7 @@ function changeHP(count) {
         this.hp.current = 0;
         alert(this.name + ' lose');
         $btn.disabled = true;
+        $btn2.disabled = true;
     }
 
     this.renderHP();
@@ -115,5 +143,17 @@ function generateLog(firstPerson, secondPerson, damage) {
 
     return logs[random(logs.length - 1)];
 }
+
+function countHit() {
+    let count = 0;
+    return function () {
+        count++;
+        console.log(count);
+        return count;
+    }
+}
+
+let countBtn1 = countHit();
+let countBtn2 = countHit();
 
 init();
