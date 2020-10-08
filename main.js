@@ -1,159 +1,90 @@
-function $getElById(id) {
-    return document.getElementById(id);
-}
+import Pokemon from "./pokemon.js";
+import random from "./utils.js";
+import generateLog from "./logs.js";
+
+const player1 = new Pokemon({
+    name: 'Pikachu',
+    hp: 500,
+    type: 'electric',
+    selector: 'character'
+});
+
+const player2 = new Pokemon({
+    name: 'Charmander',
+    hp: 450,
+    type: 'fire',
+    selector: 'enemy'
+});
+
+// function $getElById(id) {
+//     return document.getElementById(id);
+// }
 
 const $btn = document.getElementById('btn-kick');
 const $btn2 = document.getElementById('btn-kick2');
 
 const $logs = document.getElementById('logs');
 
-const character = {
-    name: 'Pikachu',
-    type: 'electric',
-    weakness: ['fighting', 'water'],
-    resistance: ['steel'],
-    hp: {
-        current: 100,
-        total: 100
-    },
-    elHP: $getElById('health-character'),
-    elProgressbar: $getElById('progressbar-character'),
-    changeHP,
-    renderHP,
-    renderHPLife,
-    renderProgressbarHP
-}
-
-const enemy = {
-    name: 'Charmander',
-    weakness: ['fighting', 'water'],
-    resistance: ['steel'],
-    hp: {
-        current: 100,
-        total: 100
-    },
-    elHP: $getElById('health-enemy'),
-    elProgressbar: $getElById('progressbar-enemy'),
-    changeHP,
-    renderHP,
-    renderHPLife,
-    renderProgressbarHP
-}
+let countBtn1 = countHit(10, $btn);
 
 $btn.addEventListener('click', function () {
-    console.log('Kick!');
-
-    character.changeHP(random(20));
-    enemy.changeHP(random(20));
-
-    let hitCount = countBtn1();
-    let maxHit = 6;
-
-    console.log(`Thunder Jolt used: ${hitCount}/${maxHit}`);
-    $btn.innerText = `Thunder Jolt: ${hitCount}/${maxHit}`;
-    if (hitCount >= maxHit) {
-        $btn.disabled = true;
-    }
+    countBtn1();
+    player1.changeHP(random(20), function (count) {
+        console.log('hp changed!', count);
+        const $p = document.createElement('p');
+        const log = generateLog(player1, player2, count);
+        $p.innerText = log;
+        $logs.insertBefore($p, $logs.children[0]);
+        console.log(log);
+    });
+    player2.changeHP(random(20), function (count) {
+        console.log('hp changed!', count);
+        console.log(generateLog(player2, player1, count));
+    });
 })
+
+let countBtn2 = countHit(6, $btn2);
 
 $btn2.addEventListener('click', function () {
-    console.log('Kick!');
-
-    character.changeHP(random(40));
-    enemy.changeHP(random(40));
-
-    let hitCount = countBtn2();
-    let maxHit = 3;
-
-    console.log(`Fireball used: ${hitCount}/${maxHit}`);
-    $btn2.innerText = `Fireball: ${hitCount}/${maxHit}`;
-    if (hitCount >= maxHit) {
-        $btn2.disabled = true;
-    }
+    countBtn2();
+    player1.changeHP(random(60, 20), function (count) {
+        console.log('hp changed!', count);
+        console.log(generateLog(player1, player2, count));
+    });
+    player2.changeHP(random(60, 20), function (count) {
+        console.log('hp changed!', count);
+        console.log(generateLog(player2, player1, count));
+    });
 })
 
-function init() {
-    console.log('Start Game!');
-    character.renderHP();
-    enemy.renderHP();
-}
-
-function renderHPLife() {
-    const {
-        hp: {
-            current,
-            total
-        },
-        elHP
-    } = this;
-    elHP.innerText = current + ' / ' + total;
-}
-
-function renderProgressbarHP() {
-    const {
-        elProgressbar,
-        hp: {
-            current
-        }
-    } = this;
-    elProgressbar.style.width = current + '%';
-}
-
-function renderHP() {
-    this.renderHPLife();
-    this.renderProgressbarHP();
-}
-
-function changeHP(count) {
-    this.hp.current -= count;
-
-    const log = this === enemy ? generateLog(this, character, count) : generateLog(this, enemy, count);
-    console.log(log);
-    const $p = document.createElement('p');
-    $p.innerText = log;
-    $logs.insertBefore($p, $logs.children[0]);
-
-    if (this.hp.current <= 0) {
-        this.hp.current = 0;
-        alert(this.name + ' lose');
-        $btn.disabled = true;
-        $btn2.disabled = true;
-    }
-
-    this.renderHP();
-}
-
-function random(num) {
-    return Math.ceil(Math.random() * num);
-}
-
-function generateLog(firstPerson, secondPerson, damage) {
-    const logs = [
-        `${firstPerson.name} вспомнил что-то важное, но неожиданно ${secondPerson.name}, не помня себя от испуга, ударил в предплечье врага. -${damage} [${firstPerson.hp.current} / ${firstPerson.hp.total}]`,
-        `${firstPerson.name} поперхнулся, и за это ${secondPerson.name} с испугу приложил прямой удар коленом в лоб врага. -${damage} [${firstPerson.hp.current} / ${firstPerson.hp.total}]`,
-        `${firstPerson.name} забылся, но в это время наглый ${secondPerson.name}, приняв волевое решение, неслышно подойдя сзади, ударил. -${damage} [${firstPerson.hp.current} / ${firstPerson.hp.total}]`,
-        `${firstPerson.name} пришел в себя, но неожиданно ${secondPerson.name} случайно нанес мощнейший удар. -${damage} [${firstPerson.hp.current} / ${firstPerson.hp.total}]`,
-        `${firstPerson.name} поперхнулся, но в это время ${secondPerson.name} нехотя раздробил кулаком \<вырезанно цензурой\> противника. -${damage} [${firstPerson.hp.current} / ${firstPerson.hp.total}]`,
-        `${firstPerson.name} удивился, а ${secondPerson.name} пошатнувшись влепил подлый удар. -${damage} [${firstPerson.hp.current} / ${firstPerson.hp.total}]`,
-        `${firstPerson.name} высморкался, но неожиданно ${secondPerson.name} провел дробящий удар. -${damage} [${firstPerson.hp.current} / ${firstPerson.hp.total}]`,
-        `${firstPerson.name} пошатнулся, и внезапно наглый ${secondPerson.name} беспричинно ударил в ногу противника. -${damage} [${firstPerson.hp.current} / ${firstPerson.hp.total}]`,
-        `${firstPerson.name} расстроился, как вдруг, неожиданно ${secondPerson.name} случайно влепил стопой в живот соперника. -${damage} [${firstPerson.hp.current} / ${firstPerson.hp.total}]`,
-        `${firstPerson.name} пытался что-то сказать, но вдруг, неожиданно ${secondPerson.name} со скуки, разбил бровь сопернику. -${damage} [${firstPerson.hp.current} / ${firstPerson.hp.total}]`
-    ];
-
-    return logs[random(logs.length - 1)];
-}
-
-function countHit() {
-    let count = 0;
+function countHit(count = 6, btn) {
+    const innerText = btn.innerText;
+    btn.innerText = `${innerText} (${count})`;
     return function () {
-        count++;
-        console.log(count);
+        count--;
+        if (count === 0) {
+            btn.disabled = true;
+        }
+        btn.innerText = `${innerText} (${count})`;
         return count;
     }
 }
 
-let countBtn1 = countHit();
-let countBtn2 = countHit();
+// function changeHP(count) {
+//     this.hp.current -= count;
 
-init();
+//     const log = this === enemy ? generateLog(this, character, count) : generateLog(this, enemy, count);
+//     console.log(log);
+//     const $p = document.createElement('p');
+//     $p.innerText = log;
+//     $logs.insertBefore($p, $logs.children[0]);
+
+//     if (this.hp.current <= 0) {
+//         this.hp.current = 0;
+//         alert(this.name + ' lose');
+//         $btn.disabled = true;
+//         $btn2.disabled = true;
+//     }
+
+//     this.renderHP();
+// }
