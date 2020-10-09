@@ -1,7 +1,11 @@
+import resetGame from "./main.js";
+
 class Selectors {
     constructor(name) {
+        this.elName = document.getElementById(`name-${name}`);
         this.elHP = document.getElementById(`health-${name}`);
         this.elProgressbar = document.getElementById(`progressbar-${name}`);
+        this.elImg = document.getElementById(`img-${name}`);
     }
 }
 
@@ -10,7 +14,9 @@ class Pokemon extends Selectors {
         name,
         hp,
         type,
-        selector
+        selector,
+        attacks = [],
+        img
     }) {
         super(selector);
 
@@ -20,7 +26,22 @@ class Pokemon extends Selectors {
             total: hp
         };
         this.type = type;
+        this.attacks = attacks;
+        this.img = img;
+
         this.renderHP();
+        this.renderPokemon();
+    }
+
+    renderPokemon = () => {
+        const {
+            name,
+            elName,
+            img,
+            elImg
+        } = this;
+        elName.innerText = name;
+        elImg.src = img;
     }
 
     changeHP = (count, cb) => {
@@ -28,6 +49,9 @@ class Pokemon extends Selectors {
 
         if (this.hp.current <= 0) {
             this.hp.current = 0;
+            alert(this.name + ' lose!');
+            // location.reload();           запасной вариант)0)
+            resetGame();
         }
 
         this.renderHP();
@@ -58,6 +82,15 @@ class Pokemon extends Selectors {
                 total
             }
         } = this;
+
+        if (current < 20) {
+            elProgressbar.classList.add('critical');
+        } else if (current < 60) {
+            elProgressbar.classList.add('low');
+        } else {
+            elProgressbar.classList.remove('critical');
+            elProgressbar.classList.remove('low');
+        }
         const percent = current / (total / 100);
         elProgressbar.style.width = percent + '%';
     }
