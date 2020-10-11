@@ -1,4 +1,4 @@
-import resetGame from "./main.js";
+import Game from "./main.js";
 
 class Selectors {
     constructor(name) {
@@ -50,8 +50,8 @@ class Pokemon extends Selectors {
         if (this.hp.current <= 0) {
             this.hp.current = 0;
             alert(this.name + ' lose!');
-            // location.reload();           запасной вариант)0)
-            resetGame();
+            const newGame = new Game();
+            newGame.reset();
         }
 
         this.renderHP();
