@@ -1,6 +1,7 @@
 import Pokemon from "./pokemon.js";
+import Api from "./api.js";
 import {
-    random,
+    // random,
     generateLog,
     renderLog,
     countHit
@@ -9,29 +10,9 @@ import {
 //     pokemons
 // } from "./pokemons.js";
 
-
-
 class Game {
-    getPokemons = async () => {
-        const response = await fetch('https://reactmarathon-api.netlify.app/api/pokemons');
-        const body = await response.json();
-        return body;
-    }
-
-    getRandomPokemon = async () => {
-        const response = await fetch('https://reactmarathon-api.netlify.app/api/pokemons?random=true');
-        const body = await response.json();
-        return body;
-    }
-
-    getDamage = async (player1Id, attackId, player2Id) => {
-        const response = await fetch(`https://reactmarathon-api.netlify.app/api/fight?player1id=${player1Id}&attackId=${attackId}&player2id=${player2Id}`);
-        const body = await response.json();
-        return body;
-    }
-
     start = async () => {
-        const pokemons = await this.getPokemons();
+        const pokemons = await api.getPokemons();
 
         const pikachu = pokemons.find(item => item.name === 'Pikachu');
         
@@ -40,7 +21,7 @@ class Game {
             selector: 'player1'
         });
 
-        const randomEnemy = await this.getRandomPokemon();
+        const randomEnemy = await api.getRandomPokemon();
 
         const player2 = new Pokemon({
             ...randomEnemy,
@@ -57,7 +38,7 @@ class Game {
             const hitCount = countHit(item.maxCount, $btn);
             $btn.addEventListener('click', async () => {
                 hitCount();
-                const damage = await this.getDamage(player1.id, player1.attacks[i].id, player2.id);
+                const damage = await api.getDamage(player1.id, player1.attacks[i].id, player2.id);
                 player2.changeHP(damage.kick.player2, function (count) {
                     renderLog(generateLog(player2, player1, count));
                 });
@@ -78,7 +59,7 @@ class Game {
         newGame.start();
     }
 }
-
+const api = new Api();
 const newGame = new Game();
 newGame.start();
 
