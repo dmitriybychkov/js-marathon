@@ -85,15 +85,17 @@ class Pokemon extends Selectors {
             }
         } = this;
 
-        if (current < 20) {
+        const percent = current / (total / 100);
+
+        if (percent < 20) {
             elProgressbar.classList.add('critical');
-        } else if (current < 60) {
+        } else if (percent < 60) {
             elProgressbar.classList.add('low');
         } else {
             elProgressbar.classList.remove('critical');
             elProgressbar.classList.remove('low');
         }
-        const percent = current / (total / 100);
+        
         elProgressbar.style.width = percent + '%';
     }
 }
