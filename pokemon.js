@@ -16,7 +16,8 @@ class Pokemon extends Selectors {
         type,
         selector,
         attacks = [],
-        img
+        img,
+        id
     }) {
         super(selector);
 
@@ -28,6 +29,7 @@ class Pokemon extends Selectors {
         this.type = type;
         this.attacks = attacks;
         this.img = img;
+        this.id = id;
 
         this.renderHP();
         this.renderPokemon();
