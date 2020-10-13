@@ -36,16 +36,16 @@ body {
 }
 
 .control {
-    /* width: 320px; */
-    width: 400px;
+    width: 320px;
+    /* width: 400px; */
     /* mine */
     height: 260px;
     position: relative;
     margin: 20px;
     display: flex;
     /* justify-content: center; */
-    /* justify-content: space-between; */
-    /* align-items: center; */
+    justify-content: space-around;
+    align-items: center;
     flex-wrap: wrap;
     flex-direction: column;
 }
@@ -311,7 +311,7 @@ body {
     cursor: pointer;
     font-size: 18px;
     /* mine */
-    margin: 8px;
+    /* margin: 8px; */
     text-transform: capitalize;
 }
 

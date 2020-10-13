@@ -1,4 +1,4 @@
-import resetGame from "./main.js";
+import Game from "./main.js";
 
 class Selectors {
     constructor(name) {
@@ -16,7 +16,8 @@ class Pokemon extends Selectors {
         type,
         selector,
         attacks = [],
-        img
+        img,
+        id
     }) {
         super(selector);
 
@@ -28,6 +29,7 @@ class Pokemon extends Selectors {
         this.type = type;
         this.attacks = attacks;
         this.img = img;
+        this.id = id;
 
         this.renderHP();
         this.renderPokemon();
@@ -50,8 +52,8 @@ class Pokemon extends Selectors {
         if (this.hp.current <= 0) {
             this.hp.current = 0;
             alert(this.name + ' lose!');
-            // location.reload();           запасной вариант)0)
-            resetGame();
+            const newGame = new Game();
+            newGame.reset();
         }
 
         this.renderHP();
@@ -83,15 +85,17 @@ class Pokemon extends Selectors {
             }
         } = this;
 
-        if (current < 20) {
+        const percent = current / (total / 100);
+
+        if (percent < 20) {
             elProgressbar.classList.add('critical');
-        } else if (current < 60) {
+        } else if (percent < 60) {
             elProgressbar.classList.add('low');
         } else {
             elProgressbar.classList.remove('critical');
             elProgressbar.classList.remove('low');
         }
-        const percent = current / (total / 100);
+        
         elProgressbar.style.width = percent + '%';
     }
 }
